@@ -6,7 +6,7 @@ This repo hosts educational scripts that fine-tune the
 We are choosing this task because:
 
 1. Qwen2 has a small 0.5B pretrained model.
-2. Qwen2 is multi-lingual and can handle tranlation tasks.
+2. Qwen2 is multi-lingual and can handle translation tasks.
 3. There are high quality English ↔ Chinese corpuses.
 
 ## Platform

@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 import fs from 'node:fs/promises'
-import path from 'node:path'
 import prettyMilliseconds from 'pretty-ms'
 import {ParquetGroupReader} from '@frost-beta/parquet-reader'
 import {TokenizerLoader} from '@lenml/tokenizers'
@@ -36,6 +35,8 @@ async function main(modelDir, files) {
     tokenizerJSON: JSON.parse(await fs.readFile(`${modelDir}/tokenizer.json`)),
     tokenizerConfig: JSON.parse(await fs.readFile(`${modelDir}/tokenizer_config.json`)),
   })
+  if (tokenizer.encode('<|im_start|><|im_end|>').length != 2)
+    throw new Error('Tokenizer does not have expected special chars')
 
   // Calculate how many parameters the model has.
   let nparams = 0
@@ -75,7 +76,7 @@ async function main(modelDir, files) {
       })
       // Report updates.
       if (++iter % reportPerIter === 0) {
-        const current = row + e * totalRows
+        const current = row + e / epochs * totalRows
         const stop = Date.now()
         const trainLoss = mean(losses)
         const eta = (totalRows - current) / (current - lastRow) * (stop - start)
