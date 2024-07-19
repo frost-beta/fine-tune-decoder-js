@@ -2,8 +2,8 @@
   "type": "module",
   "license": "Unlicense",
   "dependencies": {
-    "@frost-beta/mlx": "0.0.14",
-    "@frost-beta/parquet-reader": "1.1.1",
+    "@frost-beta/mlx": "0.0.15",
+    "@frost-beta/parquet-reader": "1.1.2",
     "@lenml/tokenizers": "1.0.9",
     "pretty-ms": "9.0.0"
   },

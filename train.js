@@ -18,7 +18,8 @@ if (process.argv.length < 4) {
 const contextSize = 128 + 64
 
 // Traning configs.
-const batchSize = 8
+const epochs = 2
+const batchSize = 32
 const learningRate = 2e-5
 const maxRows = Infinity
 
@@ -45,7 +46,7 @@ async function main(modelDir, files) {
 
   // Prepare dataset.
   const reader = new ParquetGroupReader(files)
-  const totalRows = Math.min(maxRows, await reader.getRowsCount())
+  const totalRows = epochs * Math.min(maxRows, await reader.getRowsCount())
   const reportPerIter = Math.max(Math.floor(8 / batchSize * 10), 1)
   console.log('Total rows of data to train:', totalRows)
 
@@ -58,35 +59,38 @@ async function main(modelDir, files) {
   let start = Date.now()
   let losses = []
   let lastRow = 0
-  for await (const [row, x, y] of await iterateBatches(reader, tokenizer, contextSize, batchSize)) {
-    // Use mx.tidy to free all the intermediate tensors immediately.
-    mx.tidy(() => {
-      // Compute loss and gradients, then update the model.
-      const [loss, grads] = lossAndGradFunction(model, mx.array(x, mx.int32), mx.array(y, mx.int32))
-      optimizer.update(model, grads)
-      mx.eval(model.state, optimizer.state)
-      losses.push(loss.item())
-      // Keep the states of model and optimizer from getting freed.
-      return [model.state, optimizer.state]
-    })
-    // Report updates.
-    if (++iter % reportPerIter === 0) {
-      const stop = Date.now()
-      const trainLoss = mean(losses)
-      const eta = (totalRows - row) / (row - lastRow) * (stop - start)
-      console.log(`Iter ${iter}`,
-                  `(${(100 * row / totalRows).toFixed(1)}%):`,
-                  `Train loss ${trainLoss.toFixed(2)},`,
-                  `It/sec ${(reportPerIter / (stop - start) * 1000).toFixed(2)},`,
-                  `ETA ${prettyMilliseconds(eta, {compact: true})}.`)
-      start = Date.now()
-      losses = []
-      lastRow = row
+  for (let e = 0; e < epochs; ++e) {
+    for await (const [row, x, y] of await iterateBatches(reader, tokenizer, contextSize, batchSize)) {
+      if (lastRow > maxRows * epochs)
+        break
+      // Use mx.tidy to free all the intermediate tensors immediately.
+      mx.tidy(() => {
+        // Compute loss and gradients, then update the model.
+        const [loss, grads] = lossAndGradFunction(model, mx.array(x, mx.int32), mx.array(y, mx.int32))
+        optimizer.update(model, grads)
+        mx.eval(model.state, optimizer.state)
+        losses.push(loss.item())
+        // Keep the states of model and optimizer from getting freed.
+        return [model.state, optimizer.state]
+      })
+      // Report updates.
+      if (++iter % reportPerIter === 0) {
+        const current = row + e * totalRows
+        const stop = Date.now()
+        const trainLoss = mean(losses)
+        const eta = (totalRows - current) / (current - lastRow) * (stop - start)
+        console.log(`Iter ${iter}`,
+                    `(${(100 * current / totalRows).toFixed(1)}%):`,
+                    `Train loss ${trainLoss.toFixed(2)},`,
+                    `It/sec ${(reportPerIter / (stop - start) * 1000).toFixed(2)},`,
+                    `ETA ${prettyMilliseconds(eta, {compact: true})}.`)
+        start = Date.now()
+        losses = []
+        lastRow = current
+      }
     }
-    if (lastRow > maxRows)
-      break
+    await reader.close()
   }
-  await reader.close()
 
   // Save weights on exit.
   const weightsFile = 'fine-tuned.safetensors'
