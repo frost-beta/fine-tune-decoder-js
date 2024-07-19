@@ -1,7 +1,7 @@
 # Fine-Tune Qwen2 into a Translator with JavaScript
 
 This repo hosts educational scripts that fine-tune the
-[Qwen2](https://github.com/QwenLM/Qwen2) model into a English-Chinese translator.
+[Qwen2](https://github.com/QwenLM/Qwen2) model into a Chinese-English translator.
 
 We are choosing this task because:
 
@@ -26,32 +26,32 @@ columns into one text:
 
 ```
 <|im_start|>
-Translate to Chinese:
-After being treated with carbon dioxide, the cabbage lettuce tripled in production.
+Translate to English:
+其中以結球萵苣的效果最為顯著，通過適量二氧化碳後的產量為以前的三倍。
 <|im_end|>
 <|im_start|>
-其中以結球萵苣的效果最為顯著，通過適量二氧化碳後的產量為以前的三倍。
+After being treated with carbon dioxide, the cabbage lettuce tripled in production.
 <|im_end|>
 ```
 
 The `<|im_start|>` and `<|im_end|>` are special tokens used for training chat
 bots, and we are using them to separate the Chinese and English text.
 
-After the training is done, we can use a prompt like below to feed English to
+After the training is done, we can use a prompt like below to feed Chinese to
 the fine-tuned model:
 
 ```
 <|im_start|>
-Translate to Chinese:
-Yehliu is peculiar not only in its beautiful rocks, but also in its tropical fish, corals and shells.
+Translate to English:
+野柳濱海也有奇妙的生物，像木瓜魚、紅龜鱘、海星、珊瑚和貝殼。
 <|im_end|>
 <|im_start|>
 ```
 
-and get Chinese output as text generation:
+and get English output through text generation:
 
 ```
-野柳濱海也有奇妙的生物，像木瓜魚、紅龜鱘、海星、珊瑚和貝殼。
+Yehliu is peculiar not only in its beautiful rocks, but also in its tropical fish, corals and shells.
 <|im_end|>
 ```
 

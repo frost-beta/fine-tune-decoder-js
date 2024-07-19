@@ -20,7 +20,7 @@ const contextSize = 128 + 64
 // Traning configs.
 const epochs = 2
 const batchSize = 32
-const learningRate = 2e-5
+const learningRate = 1e-5
 const maxRows = Infinity
 
 main(process.argv[2], process.argv.slice(3))
@@ -131,7 +131,7 @@ async function* iterateDataset(reader, tokenizer) {
   const end = '<|im_end|>'
   for await (const data of await reader.getIterator({shuffle: true, chunkSize: 1024})) {
     const [en, zh] = data
-    yield `${start}Translate to Chinese:\n${en}${end}${start}${zh}${end}`
+    yield `${start}Translate to English:\n${zh}${end}${start}${en}${end}`
   }
 }
 
