@@ -1,19 +1,18 @@
-# Fine-Tune Qwen2 into a Translator with JavaScript
+# Fine-tune a decoder-only model with JavaScript
 
-This repo hosts educational scripts that fine-tune the
-[Qwen2](https://github.com/QwenLM/Qwen2) model into a Chinese-English translator.
+This repo hosts educational scripts that fine-tune the decoder-only model
+[Qwen2](https://github.com/QwenLM/Qwen2) into a Chinese-English translator.
 
-We are choosing this task because:
-
-1. Qwen2 has a small 0.5B pretrained model.
-2. Qwen2 is multi-lingual and can handle translation tasks.
-3. There are high quality English ↔ Chinese corpuses.
+Qwen2 is multi-lingual and has a small 0.5B pretrained version, which makes it
+very useful to be fine-tuned for specialized tasks. We are traning it into a
+simple translator, and you can compare this repo with :construction: to see
+the differences between traning decoder-only and encoder-only models.
 
 ## Platform
 
 Only Macs with Apple Silicon are supported.
 
-## How Does it Work
+## How does it work
 
 The corpus has 2 columns for English and Chinese text:
 
@@ -60,8 +59,8 @@ Yehliu is peculiar not only in its beautiful rocks, but also in its tropical fis
 Clone this repo and install dependencies:
 
 ```sh
-git clone https://github.com/frost-beta/fine-tune-qwen2-js.git
-cd fine-tune-qwen2-js
+git clone https://github.com/frost-beta/fine-tune-decoder-js.git
+cd fine-tune-decoder-js
 npm install
 ```
 
@@ -93,7 +92,7 @@ number to reduce RAM usages.
 
 After the training is done, a `fine-tuned.safetensors` file will be written.
 
-## Using the Fine-Tuned Model
+## Use the fine-tuned model
 
 Overwrite the Qwen2's weights with our fine-tuned weights:
 
@@ -106,6 +105,11 @@ Feed the model with some English sentences and get Chinese output:
 ```sh
 echo 'Anxiety is the dizziness of freedom.' | node translator.js Qwen2-0.5B
 ```
+
+## What's next
+
+After getting familiar with traning the decoder-only model, you can visit
+:construction: to see how to train a encoder-only model to do the same task.
 
 ## License
 
