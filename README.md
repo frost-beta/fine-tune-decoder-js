@@ -100,16 +100,16 @@ Overwrite the Qwen2's weights with our fine-tuned weights:
 mv fine-tuned.safetensors Qwen2-0.5B/model.safetensors
 ```
 
-Feed the model with some English sentences and get Chinese output:
+Feed the model with some Chinese sentences and get English output:
 
 ```sh
-echo 'Anxiety is the dizziness of freedom.' | node translator.js Qwen2-0.5B
+echo '微軟Windows作業系統19日大當機，災情遍及全球' | node translator.js Qwen2-0.5B
 ```
 
 ## What's next
 
 After getting familiar with traning the decoder-only model, you can visit
-:construction: to see how to train a encoder-only model to do the same task.
+the :construction: to see how to train a encoder-only model to do the same task.
 
 ## License
 
